@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Login Page";
+    Layout = "_LayoutAuth";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+
+    <div class="login-header">
+        <p>Please log in to continue.</p>
+    </div>
+    <div class="login-form-container">
+        <input class="form-control" type='email' placeholder="Enter your Email" />
+        <input class="form-control" type='password' placeholder="Enter your password" />
+        <button class="login-button">Login</button>
+    </div>
+

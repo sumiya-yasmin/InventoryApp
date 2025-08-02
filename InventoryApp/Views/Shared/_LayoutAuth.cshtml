@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Login Page</title>
+    <link rel="stylesheet" href="~/InventoryApp.styles.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Welcome To Easy Inventory App</h1>
+        </div>
+        <main >
+            @RenderBody()
+        </main>
+    </div>
+</body>
+
+</html>
