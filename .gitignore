@@ -1,0 +1,47 @@
+# Build artifacts
+bin/
+obj/
+out/
+
+# Rider project files
+.idea/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Database files
+*.mdf
+*.ldf
+
+# Secrets (optional)
+secrets.json
+
+# dotCover
+.idea/
+
+# Backup files
+*.bak
+*.tmp
+*.old
+
+# Ignore publish output if you use dotnet publish manually (adjust if needed)
+**/publish/
