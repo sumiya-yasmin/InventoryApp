@@ -15,13 +15,22 @@ namespace MyApp.Namespace
         public ActionResult Login(string emailtxt, string passwordtxt)
         {
             string Message = "Unauthorized";
+            
             if (emailtxt == "simi@nasif" && passwordtxt == "nasif")
             {
-                Message = "Authorized";
+                ViewBag.Message = "Authorized";
+                HttpContext.Session.SetString("Email", "emailtxt");
+               return RedirectToAction("Dashboard", "Inventory");
             }
             ViewBag.Message = Message;
             return View();
 
+        }
+
+        [HttpGet]
+        public ActionResult Logout() {
+            HttpContext.Session.Clear();
+            return View("Login");
         }
 
         public ActionResult Signup()
