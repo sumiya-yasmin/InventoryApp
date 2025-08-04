@@ -10,8 +10,18 @@
         <p>Please log in to continue.</p>
     </div>
     <div class="login-form-container">
-        <input class="form-control" type='email' placeholder="Enter your Email" />
-        <input class="form-control" type='password' placeholder="Enter your password" />
+        <form method="post" action="@Url.Action("Login", "Auth")">
+        <label for="email" class="form-label">Email:</label>
+        <input class="form-control" type='email' placeholder="Enter your Email" name="emailtxt"/>
+        <label for="password" class="form-label">Password:</label>
+        <input class="form-control" type='password' placeholder="Enter your password" name="passwordtxt"/>
         <button class="login-button">Login</button>
+        </form>
+        <p>@ViewBag.Message</p>
     </div>
-
+    <div class="signup-link">
+        <p>Don't have an account?</p>
+        <a asp-action="Signup" asp-controller="Auth">
+       Register Now
+        </a>
+    </div>
