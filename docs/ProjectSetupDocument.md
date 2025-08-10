@@ -75,3 +75,62 @@ This is the key! ASP.NET Core uses CSS isolation (also called scoped CSS) which 
     <link rel="stylesheet" href="~/css/login.css" />
 }
 ```
+
+
+# To connect to data base
+```
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrong@123" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2022-latest
+```
+## Step 1 — Pull SQL Server Docker Image
+While making sure Docker is running, then in the terminal:
+```
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+```
+## Step 2 — Run SQL Server Container
+Run it with a password and exposed port:
+```
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Inventory!Passw0rd" \
+   -p 1433:1433 --name sqlserver2022 \
+   -d mcr.microsoft.com/mssql/server:2022-latest
+```
+in powershell
+```
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Inventory!Passw0rd" -p 1433:1433 --name sqlserver2022 -d mcr.microsoft.com/mssql/server:2022-latest
+```
+
+## Step 3 — Check if SQL Server is Running
+```
+docker ps
+```
+You should see `sqlserver2022` in the list.
+
+## Step 4 — Connect to SQL Server (Optional GUI)  [This step is optional for now]
+### If you want a GUI instead of typing SQL commands:  Install Azure Data Studio (lightweight, cross-platform)
+
+New connection:
+
+Server → localhost
+
+Authentication → SQL Login
+
+Username → sa
+
+Password → YourStrong!Passw0rd
+
+## Step 5 — Add Connection String in .NET Core
+Inside your .NET Core project’s `appsettings.json`:
+
+```
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1433;Database=MyAppDb;User Id=sa;Password=Inventory!Passw0rd;TrustServerCertificate=True;"
+  }
+}
+```
+
+## Step 6 — Install EF Core SQL Server Provider
+In your terminal (inside project folder):
+```
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+```
