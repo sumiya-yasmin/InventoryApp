@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using InventoryApp.Data;
 using InventoryApp.Models;
+using InventoryApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MyApp.Namespace
@@ -52,31 +53,37 @@ namespace MyApp.Namespace
         }
 
         [HttpPost]
-        public ActionResult Signup(string email, string password, string name)
+        public ActionResult Signup(SignupViewModel model)
         {
-            if (_context.Users.Any(u => u.Email == email))
+            if (!ModelState.IsValid)
             {
-                ViewBag.Message = "Email already Registered";
-                return View();
+                return View(model);
+
+            }
+
+            if (_context.Users.Any(u => u.Email == model.Email))
+            {
+                ModelState.AddModelError("Email", "Email already registered.");
+                 return View(model);
             }
             var user = new User
             {
-                Email = email,
-                PasswordHash = ComputeSha256Hash(password),
-                Name = name,
-            }
+                Email = model.Email,
+                PasswordHash = ComputeSha256Hash(model.Password),
+                Name = model.Name,
+            };
             _context.Users.Add(user);
             _context.SaveChanges();
-            ViewBag.Message = "User created successfully!";
+            TempData["SuccessMessage"] = "User created successfully! Please log in.";
             return RedirectToAction("Login");
         }
-        
+
         private static string ComputeSha256Hash(string rawData)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                
+
                 StringBuilder builder = new StringBuilder();
                 foreach (var b in bytes)
                 {
