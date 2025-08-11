@@ -134,3 +134,234 @@ In your terminal (inside project folder):
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 ```
+## Step 7 — Create EF Core DbContext
+Example Data/ApplicationDbContext.cs:
+```
+using Microsoft.EntityFrameworkCore;
+
+namespace MyApp.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
+
+        public DbSet<User> Users { get; set; }
+    }
+}
+```
+**Ofcourse, User model entity has to be created beforehand**
+
+## Step 8 — Register DbContext in Program.cs
+```
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+```
+Add at the top:
+```
+using Microsoft.EntityFrameworkCore;
+```
+### Step 9 — Run Migrations
+```
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+**Ofcourse, User model entity has to be created beforehand**
+**You can't run migration without an entity model**
+
+# To integrate database 
+## Create model in model directory.
+example: User.cs
+```
+namespace InventoryApp.Models;
+
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string Role { get; set; } = "User";
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? LastLogIn { get; set; }
+    public bool IsActive { get; set; } = true;
+}
+```
+
+## Add database conext inside controller
+At the top inside controller class:
+```
+ private readonly ApplicationDbContext _context;
+        public AuthController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+```
+## There are two ways to integrate a login page controller and function.
+### The basic way:
+An example of Auth controller code for login:
+```
+ [HttpPost]
+        public ActionResult Login(string email, string password)
+        {
+            var hashedPassword = ComputeSha256Hash(password);
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.PasswordHash == hashedPassword);
+
+            if (user != null)
+            {
+                ViewBag.Message = "Authorized";
+                HttpContext.Session.SetString("Email", user.Email);
+                return RedirectToAction("Dashboard", "Inventory");
+            }
+            ViewBag.Message = "Unauthorized. Please signup first if you dont have an account yet";
+            return View();
+
+        }
+```
+Accordingly The Login Page:
+```
+@{
+    ViewData["Title"] = "Login Page";
+    Layout = "_LayoutAuth";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+
+    <div class="login-header">
+        <p>Please log in to continue.</p>
+    </div>
+    <div class="login-form-container">
+        <form method="post" action="@Url.Action("Login", "Auth")">
+        <label for="email" class="form-label">Email:</label>
+        <input class="form-control" type='email' placeholder="Enter your Email" name="email"/>
+        <label for="password" class="form-label">Password:</label>
+        <input class="form-control" type='password' placeholder="Enter your password" name="password"/>
+        <button class="login-button">Login</button>
+        </form>
+        <p>@ViewBag.Message</p>
+    </div>
+    <div class="signup-link">
+        <p>Don't have an account?</p>
+        <a asp-action="Signup" asp-controller="Auth">
+       Register Now
+        </a>
+    </div>
+```
+
+### The practical/standard way
+### UserViewModel in `ViewModels/SignupViewModel`
+```
+using System.ComponentModel.DataAnnotations;
+
+namespace InventoryApp.ViewModels
+{
+    public class SignupViewModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Confirm password is required")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; }
+    }
+}
+```
+Accordingly Controller
+Change your Signup actions to use the view model:
+```
+[HttpGet]
+public ActionResult Signup()
+{
+    return View();
+}
+
+[HttpPost]
+public ActionResult Signup(SignupViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    if (_context.Users.Any(u => u.Email == model.Email))
+    {
+        ModelState.AddModelError("Email", "Email already registered.");
+        return View(model);
+    }
+
+    var user = new User
+    {
+        Name = model.Name,
+        Email = model.Email,
+        PasswordHash = ComputeSha256Hash(model.Password),
+    };
+
+    _context.Users.Add(user);
+    _context.SaveChanges();
+
+    return RedirectToAction("Login");
+}
+```
+SignUp Page:
+```
+@model InventoryApp.ViewModels.SignupViewModel
+
+@{
+    ViewData["Title"] = "Signup Page";
+    Layout = "_LayoutAuth";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+
+<div class="login-header">
+    <p>Please sign up to join us.</p>
+</div>
+<div class="login-form-container">
+    <form asp-action="Signup" asp-controller="Auth" method="post">
+        <div>
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div>
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <button class="login-button">Signup</button>
+    </form>
+</div>
+<div class="signup-link">
+    <p>Already have an account?</p>
+    <a asp-action="Login" asp-controller="Auth">Login Now</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+```
