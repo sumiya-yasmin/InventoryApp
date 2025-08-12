@@ -22,6 +22,6 @@ public class Purchase
 
     [Required]
     public int SupplierId { get; set; }
-    public Supplier Supplier { get; set; }
+    public Supplier? Supplier { get; set; }
 
 }

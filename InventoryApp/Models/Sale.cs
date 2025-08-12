@@ -21,7 +21,7 @@ public class Sale
     
     [Required]
     public int CustomerId { get; set; }
-    public Customer Customer { get; set; }
+    public Customer? Customer { get; set; }
 
 
 }
