@@ -3,11 +3,11 @@ namespace InventoryApp.Services.Interfaces
 {
     public interface ICustomerService
     {
-        Task<IEnumerable<Customer>> GetAllProductAsync();
-        Task<Customer?> GetProductByIdAsync(int id);
-        Task<Customer> AddProductAsync(Customer customer);
-        Task<Customer> UpdateProductAsync(Customer customer);
-        Task<Customer?> DeleteProductAsync(int id);
+        Task<IEnumerable<Customer>> GetAllCustomerAsync();
+        Task<Customer?> GetCustomerByIdAsync(int id);
+        Task<Customer> AddCustomerAsync(Customer customer);
+        Task<Customer> UpdateCustomerAsync(Customer customer);
+        Task<Customer?> DeleteCustomerAsync(int id);
 
     }
 }
