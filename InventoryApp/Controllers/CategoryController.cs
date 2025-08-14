@@ -38,11 +38,12 @@ public class CategoryController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("name, Description")] Category category)
+    public async Task<IActionResult> Create([Bind("Name, Description")] Category category)
     {
         if (ModelState.IsValid)
         {
             await _categoryService.AddCategoryAsync(category);
+            TempData["SuccessMessage"] = $"Category '{category.Name}' created successfully.";
             return RedirectToAction(nameof(Index));
         }
         return View(category);
@@ -80,6 +81,7 @@ public class CategoryController : Controller
             try
             {
                 await _categoryService.UpdateCategoryAsync(category);
+                TempData["SuccessMessage"] = $"Category '{category.Name}' updated successfully.";
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -118,7 +120,11 @@ public class CategoryController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        await _categoryService.DeleteCategoryAsync(id);
+       var category = await _categoryService.DeleteCategoryAsync(id);
+        if (category != null)
+        {
+            TempData["SuccessMessage"] = $"Category '{category.Name}' deleted successfully.";
+        }
         return RedirectToAction(nameof(Index));
     }
 
