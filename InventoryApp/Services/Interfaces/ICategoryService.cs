@@ -1,5 +1,5 @@
 using InventoryApp.Models;
-namespace InventoryApp.Services.interfaces
+namespace InventoryApp.Services.Interfaces
 {
     public interface ICategoryService
     {

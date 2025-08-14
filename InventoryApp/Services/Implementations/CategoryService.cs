@@ -1,6 +1,6 @@
 using InventoryApp.Data;
 using InventoryApp.Models;
-using InventoryApp.Services.interfaces;
+using InventoryApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApp.Services.Implementations
