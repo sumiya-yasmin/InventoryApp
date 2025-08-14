@@ -39,4 +39,20 @@ public class ProductService : IProductService
         }
         return product;
     }
+
+     public async Task<int> GetProductStockAsync(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.Purchases)
+                .Include(p => p.Sales)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
+
+            if (product == null)
+                return 0;
+
+            var totalPurchased = product.Purchases.Sum(p => p.Quantity);
+            var totalSold = product.Sales.Sum(s => s.Quantity);
+
+            return totalPurchased - totalSold;
+        }
 }

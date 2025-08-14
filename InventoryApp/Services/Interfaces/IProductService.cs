@@ -8,6 +8,7 @@ namespace InventoryApp.Services.Interfaces
         Task<Product> AddProductAsync(Product product);
         Task<Product> UpdateProductAsync(Product product);
         Task<Product?> DeleteProductAsync(int id);
+        Task<int> GetProductStockAsync(int id);
 
     }
 }
