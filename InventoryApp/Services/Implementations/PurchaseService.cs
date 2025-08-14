@@ -3,7 +3,7 @@ using InventoryApp.Models;
 using InventoryApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore; 
 
-namespace InventoryApp.Services
+namespace InventoryApp.Services.Implementations
 {
     public class PurchaseService : IPurchaseService
     {
@@ -21,7 +21,7 @@ namespace InventoryApp.Services
                 .ToListAsync();
         }
 
-        public async Task<Purchase> GetPurchaseByIdAsync(int id)
+        public async Task<Purchase?> GetPurchaseByIdAsync(int id)
         {
             return await _context.Purchases
                 .Include(p => p.Product)
@@ -42,7 +42,7 @@ namespace InventoryApp.Services
             return purchase;
         }
 
-        public async Task<Purchase> DeletePurchaseAsync(int id)
+        public async Task<Purchase?> DeletePurchaseAsync(int id)
         {
             var purchase = await _context.Purchases.FindAsync(id);
             if (purchase != null)
