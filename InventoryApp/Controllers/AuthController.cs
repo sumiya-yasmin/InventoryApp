@@ -5,7 +5,7 @@ using InventoryApp.Models;
 using InventoryApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyApp.Namespace
+namespace InventoryApp.Controllers
 {
     public class AuthController : Controller
     {
