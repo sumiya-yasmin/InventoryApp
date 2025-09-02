@@ -1,0 +1,30 @@
+@model InventoryApp.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<h1>Product Details</h1>
+
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Purchase Price</dt>
+        <dd class="col-sm-10">@Model.PurchasePrice</dd>
+
+        <dt class="col-sm-2">Sell Price</dt>
+        <dd class="col-sm-10">@Model.SellPrice</dd>
+
+        <dt class="col-sm-2">Quantity in Stock</dt>
+        <dd class="col-sm-10">@Model.QuantityInStock</dd>
+
+        <dt class="col-sm-2">Category</dt>
+        <dd class="col-sm-10">@Model.Category?.Name</dd>
+    </dl>
+</div>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-warning">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>
