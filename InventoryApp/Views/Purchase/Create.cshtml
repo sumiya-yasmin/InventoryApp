@@ -1,0 +1,36 @@
+@model InventoryApp.Models.Purchase
+
+@{
+    ViewData["Title"] = "Create Purchase";
+}
+
+<h1>Create Purchase</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="ProductId">Product</label>
+        <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SupplierId">Supplier</label>
+        <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Quantity"></label>
+        <input asp-for="Quantity" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PricePerUnit"></label>
+        <input asp-for="PricePerUnit" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button> |
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
