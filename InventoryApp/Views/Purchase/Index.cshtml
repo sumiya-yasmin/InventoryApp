@@ -1,0 +1,49 @@
+@model IEnumerable<InventoryApp.Models.Purchase>
+@{
+    ViewData["Title"] = "Purchase Page";
+}
+
+<h1>Purchases</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">New Purchase</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model=>model.Product)</th>
+            <th>@Html.DisplayNameFor(model=>model.Supplier)</th>
+            <th>@Html.DisplayNameFor(model=>model.Quantity)</th>
+            <th>@Html.DisplayNameFor(model=>model.PricePerUnit)</th>
+            <th>Total</th>
+            <th>@Html.DisplayNameFor(model=>model.PurchaseDate)</th>
+            <th></th>
+        </tr>
+    </thead>
+      <tbody></tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td>@p.Product.Name</td>
+            <td>@p.Supplier?.Name</td>
+            <td>@p.Quantity</td>
+            <td>@p.PricePerUnit</td>
+            <td>@(p.Quantity * p.PricePerUnit)</td>
+            <td>@p.PurchaseDate.ToString("yyyy-MM-dd")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@p.PurchaseId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@p.PurchaseId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@p.PurchaseId">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
