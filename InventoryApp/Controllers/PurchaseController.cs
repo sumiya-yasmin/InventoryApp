@@ -41,7 +41,7 @@ public class PurchaseController : Controller
         }
         return View(purchase);
     }
-   
+
     public async Task<IActionResult> Create()
     {
         ViewData["ProductId"] = new SelectList(await _productService.GetAllProductAsync(), "ProductId", "Name");
@@ -55,10 +55,10 @@ public class PurchaseController : Controller
         var product = await _productService.GetProductByIdAsync(purchase.ProductId);
         if (product == null) return NotFound();
         if (!ModelState.IsValid)
-{
-    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-    Console.WriteLine(string.Join(", ", errors));
-}
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            Console.WriteLine(string.Join(", ", errors));
+        }
 
         if (ModelState.IsValid)
         {
@@ -92,10 +92,23 @@ public class PurchaseController : Controller
     public async Task<IActionResult> Edit(int id, Purchase purchase)
     {
         if (id != purchase.PurchaseId) return NotFound();
+        var oldPurchase = await _purchaseService.GetPurchaseByIdAsync(id);
+        if (oldPurchase == null) return NotFound();
+
+        var product = await _productService.GetProductByIdAsync(purchase.ProductId);
+        if (product == null) return NotFound();
 
         if (ModelState.IsValid)
         {
-            await _purchaseService.UpdatePurchaseAsync(purchase);
+            int quantityDiff = purchase.Quantity - oldPurchase.Quantity;
+            product.QuantityInStock += quantityDiff;
+            product.PurchasePrice = purchase.PricePerUnit;
+            oldPurchase.Quantity = purchase.Quantity;
+            oldPurchase.PricePerUnit = purchase.PricePerUnit;
+            oldPurchase.ProductId = purchase.ProductId;
+            oldPurchase.SupplierId = purchase.SupplierId;
+            oldPurchase.PurchaseDate = purchase.PurchaseDate;
+            await _purchaseService.UpdatePurchaseAsync(oldPurchase);
             TempData["SuccessMessage"] = "Purchase updated successfully!";
             return RedirectToAction(nameof(Index));
         }
@@ -119,6 +132,20 @@ public class PurchaseController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
+        var purchase = await _purchaseService.GetPurchaseByIdAsync(id);
+        if (purchase == null) return NotFound();
+
+        var product = await _productService.GetProductByIdAsync(purchase.ProductId);
+        if (product != null)
+        {
+
+            product.QuantityInStock -= purchase.Quantity;
+
+            if (product.QuantityInStock < 0)
+                product.QuantityInStock = 0;
+
+            await _productService.UpdateProductAsync(product);
+        }
         await _purchaseService.DeletePurchaseAsync(id);
         TempData["SuccessMessage"] = "Purchase deleted successfully!";
         return RedirectToAction(nameof(Index));
