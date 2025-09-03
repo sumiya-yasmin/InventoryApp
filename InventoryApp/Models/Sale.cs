@@ -17,7 +17,7 @@ public class Sale
 
     [Required]
     public int ProductId { get; set; }
-    public required Product Product { get; set; }
+    public Product? Product { get; set; }
     
     [Required]
     public int CustomerId { get; set; }
