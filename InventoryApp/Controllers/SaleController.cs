@@ -88,9 +88,36 @@ public class SaleController : Controller
     {
         if (id != sale.SaleId) return NotFound();
 
+        var oldSale = await _saleService.GetSaleByIdAsync(id);
+        if (oldSale == null) return NotFound();
+
+        var product = await _productService.GetProductByIdAsync(oldSale.ProductId);
+        if (product == null) return NotFound();
+
+
         if (ModelState.IsValid)
         {
-            await _saleService.UpdateSaleAsync(sale);
+            int quantityDiff = sale.Quantity - oldSale.Quantity;
+            product.QuantityInStock -= quantityDiff;
+
+            if (product.QuantityInStock < 0)
+            {
+                ModelState.AddModelError("", "Not enough stock to update this sale.");
+                return View(sale);
+            }
+
+            product.SellPrice = sale.PricePerUnit;
+
+            await _productService.UpdateProductAsync(product);
+
+
+            oldSale.Quantity = sale.Quantity;
+            oldSale.PricePerUnit = sale.PricePerUnit;
+            oldSale.ProductId = sale.ProductId;
+            oldSale.CustomerId = sale.CustomerId;
+            oldSale.SaleDate = sale.SaleDate;
+
+            await _saleService.UpdateSaleAsync(oldSale);
             TempData["SuccessMessage"] = "Sale updated successfully!";
             return RedirectToAction(nameof(Index));
         }
@@ -114,6 +141,20 @@ public class SaleController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
+          var sale = await _saleService.GetSaleByIdAsync(id);
+        if (sale == null) return NotFound();
+
+        var product = await _productService.GetProductByIdAsync(sale.ProductId);
+        if (product != null)
+        {
+
+            product.QuantityInStock += sale.Quantity;
+
+            // if (product.QuantityInStock < 0)
+            //     product.QuantityInStock = 0;
+
+            await _productService.UpdateProductAsync(product);
+        }
         await _saleService.DeleteSaleAsync(id);
         TempData["SuccessMessage"] = "Sale deleted successfully!";
         return RedirectToAction(nameof(Index));
