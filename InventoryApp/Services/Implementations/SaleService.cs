@@ -12,59 +12,84 @@ public class SaleService : ISaleService
     {
         _context = context;
     }
-public async Task<IEnumerable<Sale>> GetAllSaleAsync()
+    public async Task<IEnumerable<Sale>> GetAllSaleAsync()
+    {
+        return await _context.Sales
+            .Include(s => s.Product)
+            .Include(s => s.Customer)
+            .OrderByDescending(s => s.SaleDate)
+            .ToListAsync();
+    }
+
+    public async Task<Sale?> GetSaleByIdAsync(int id)
+    {
+        return await _context.Sales
+            .Include(s => s.Product)
+            .Include(s => s.Customer)
+            .FirstOrDefaultAsync(s => s.SaleId == id);
+    }
+
+    public async Task<Sale> AddSaleAsync(Sale sale)
+    {
+        // var product = await _context.Products.FindAsync(sale.ProductId);
+        // if (product != null)
+        // {
+        //     if (product.QuantityInStock < sale.Quantity)
+        //         throw new InvalidOperationException("Not enough stock available.");
+
+        //     product.QuantityInStock -= sale.Quantity;
+        // }
+
+        _context.Sales.Add(sale);
+        await _context.SaveChangesAsync();
+        return sale;
+    }
+
+    public async Task<Sale> UpdateSaleAsync(Sale sale)
+    {
+        _context.Sales.Update(sale);
+        await _context.SaveChangesAsync();
+        return sale;
+    }
+
+    public async Task<Sale?> DeleteSaleAsync(int id)
+    {
+        var sale = await _context.Sales.FindAsync(id);
+        if (sale != null)
+        {
+            var product = await _context.Products.FindAsync(sale.ProductId);
+            if (product != null)
+                product.QuantityInStock += sale.Quantity;
+
+            _context.Sales.Remove(sale);
+            await _context.SaveChangesAsync();
+        }
+        return sale;
+    }
+         public async Task<IEnumerable<Sale>> GetRecentSalesAsync(int count)
         {
             return await _context.Sales
                 .Include(s => s.Product)
                 .Include(s => s.Customer)
                 .OrderByDescending(s => s.SaleDate)
+                .Take(count)
                 .ToListAsync();
         }
 
-        public async Task<Sale?> GetSaleByIdAsync(int id)
+        public async Task<IEnumerable<Sale>> GetSalesByDateRangeAsync(DateTime start, DateTime end)
         {
             return await _context.Sales
                 .Include(s => s.Product)
                 .Include(s => s.Customer)
-                .FirstOrDefaultAsync(s => s.SaleId == id);
+                .Where(s => s.SaleDate >= start && s.SaleDate <= end)
+                .ToListAsync();
         }
 
-        public async Task<Sale> AddSaleAsync(Sale sale)
+        public async Task<decimal> GetTotalSalesAmountAsync(DateTime start, DateTime end)
         {
-            var product = await _context.Products.FindAsync(sale.ProductId);
-            if (product != null)
-            {
-                if (product.QuantityInStock < sale.Quantity)
-                    throw new InvalidOperationException("Not enough stock available.");
-                
-                product.QuantityInStock -= sale.Quantity;
-            }
-
-            _context.Sales.Add(sale);
-            await _context.SaveChangesAsync();
-            return sale;
-        }
-
-        public async Task<Sale> UpdateSaleAsync(Sale sale)
-        {
-            _context.Sales.Update(sale);
-            await _context.SaveChangesAsync();
-            return sale;
-        }
-
-        public async Task<Sale?> DeleteSaleAsync(int id)
-        {
-            var sale = await _context.Sales.FindAsync(id);
-            if (sale != null)
-            {
-                var product = await _context.Products.FindAsync(sale.ProductId);
-                if (product != null)
-                    product.QuantityInStock += sale.Quantity;
-
-                _context.Sales.Remove(sale);
-                await _context.SaveChangesAsync();
-            }
-            return sale;
+            return await _context.Sales
+                .Where(s => s.SaleDate >= start && s.SaleDate <= end)
+                .SumAsync(s => s.Quantity * s.PricePerUnit);
         }
 
 }
