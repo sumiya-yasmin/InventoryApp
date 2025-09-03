@@ -1,0 +1,50 @@
+@model IEnumerable<InventoryApp.Models.Sale>
+@{
+    ViewData["Title"] = "Sales Page";
+}
+
+<h1>Sales</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">New Sale</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Customer</th>
+            <th>Quantity</th>
+            <th>Price/Unit</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var sale in Model)
+    {
+        <tr>
+            <td>@sale.Product.Name</td>
+            <td>@sale.Customer?.Name</td>
+            <td>@sale.Quantity</td>
+            <td>@sale.PricePerUnit</td>
+            <td>@(sale.Quantity * sale.PricePerUnit)</td>
+            <td>@sale.SaleDate.ToString("yyyy-MM-dd")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@sale.SaleId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@sale.SaleId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@sale.SaleId">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
