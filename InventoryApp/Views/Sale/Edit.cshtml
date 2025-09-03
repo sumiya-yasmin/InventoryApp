@@ -1,0 +1,34 @@
+@model InventoryApp.Models.Sale
+
+@{
+    ViewData["Title"] = "Edit Sale";
+}
+
+<h1>Edit Sale</h1>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="SaleId" />
+
+    <div class="form-group">
+        <label asp-for="ProductId">Product</label>
+        <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CustomerId">Customer</label>
+        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Quantity"></label>
+        <input asp-for="Quantity" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PricePerUnit"></label>
+        <input asp-for="PricePerUnit" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button> |
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
