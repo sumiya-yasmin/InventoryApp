@@ -1,7 +1,7 @@
 using InventoryApp.Data;
 using InventoryApp.Models;
 using InventoryApp.Services.Interfaces;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApp.Services.Implementations
 {
@@ -17,7 +17,8 @@ namespace InventoryApp.Services.Implementations
         public async Task<IEnumerable<Purchase>> GetAllPurchaseAsync()
         {
             return await _context.Purchases
-                .Include(p => p.Product) // ✅ Load related Product
+                .Include(p => p.Product)
+                .Include(p => p.Supplier)
                 .ToListAsync();
         }
 
@@ -25,6 +26,7 @@ namespace InventoryApp.Services.Implementations
         {
             return await _context.Purchases
                 .Include(p => p.Product)
+                .Include(p => p.Supplier)
                 .FirstOrDefaultAsync(p => p.PurchaseId == id);
         }
 
