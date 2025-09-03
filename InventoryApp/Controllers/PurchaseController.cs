@@ -35,25 +35,31 @@ public class PurchaseController : Controller
     public async Task<IActionResult> Details(int? id)
     {
         var purchase = await GetPurchaseByID(id);
-        if (purchase != null)
+        if (purchase == null)
         {
             return NotFound();
         }
         return View(purchase);
     }
-    [HttpPost]
-    [ValidateAntiForgeryToken]
+   
     public async Task<IActionResult> Create()
     {
         ViewData["ProductId"] = new SelectList(await _productService.GetAllProductAsync(), "ProductId", "Name");
         ViewData["SupplierId"] = new SelectList(await _supplierService.GetAllSupplierAsync(), "SupplierId", "Name");
         return View();
     }
-
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Purchase purchase)
     {
         var product = await _productService.GetProductByIdAsync(purchase.ProductId);
         if (product == null) return NotFound();
+        if (!ModelState.IsValid)
+{
+    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+    Console.WriteLine(string.Join(", ", errors));
+}
+
         if (ModelState.IsValid)
         {
 
@@ -73,12 +79,12 @@ public class PurchaseController : Controller
     public async Task<IActionResult> Edit(int? id)
     {
         var purchase = await GetPurchaseByID(id);
-        if (purchase != null)
+        if (purchase == null)
         {
             return NotFound();
         }
-        ViewData["ProductId"] = new SelectList(await _productService.GetAllProductAsync(), "ProductId", "Name", purchase.ProductId);
-        ViewData["SupplierId"] = new SelectList(await _supplierService.GetAllSupplierAsync(), "SupplierId", "Name", purchase.SupplierId);
+        ViewData["ProductId"] = new SelectList(await _productService.GetAllProductAsync(), "ProductId", "Name", purchase?.ProductId);
+        ViewData["SupplierId"] = new SelectList(await _supplierService.GetAllSupplierAsync(), "SupplierId", "Name", purchase?.SupplierId);
         return View(purchase);
     }
     [HttpPost]
@@ -101,7 +107,7 @@ public class PurchaseController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var purchase = await GetPurchaseByID(id);
-        if (purchase != null)
+        if (purchase == null)
         {
             return NotFound();
         }
