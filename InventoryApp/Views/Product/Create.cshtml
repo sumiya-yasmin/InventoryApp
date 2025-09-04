@@ -1,44 +1,61 @@
 @model InventoryApp.Models.Product
-
 @{
     ViewData["Title"] = "Create Product";
 }
-<h1>Create Product</h1>
+<div class="card shadow-sm">
+    <div class="card-header">
+       <h3>@ViewData["Title"]</h3>
+    </div>
+<div class="card-body">
 <form asp-action="Create">
-    <div class="form-group">
-    <label asp-for="Name"></label>
+    <div class="mb-3 row">
+    <label asp-for="Name" class="col-sm-3 col-form-label"></label>
+    <div class="col-sm-9">
     <input asp-for="Name" class="form-control"/>
     <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+    </div>
 
-    <div class="form-group">
-        <label asp-for="CategoryId">Category</label>
+    <div class="mb-3 row">
+        <label asp-for="CategoryId" class="col-sm-3 col-form-label">Category</label>
+        <div class="col-sm-9">
         <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="QuantityInStock"></label>
+    <div class="mb-3 row">
+        <label asp-for="QuantityInStock" class="col-sm-3 col-form-label"></label>
+        <div class="col-sm-9">
         <input asp-for="QuantityInStock" class="form-control" />
         <span asp-validation-for="QuantityInStock" class="text-danger"></span>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label asp-for="PurchasePrice"></label>
+    <div class="mb-3 row">
+        <label asp-for="PurchasePrice" class="col-sm-3 col-form-label"></label>
+        <div class="col-sm-9">
+
         <input asp-for="PurchasePrice" class="form-control" />
         <span asp-validation-for="PurchasePrice" class="text-danger"></span>
     </div>
+    </div>
 
-    <div class="form-group">
-        <label asp-for="SellPrice"></label>
+    <div class="mb-3 row">
+        <label asp-for="SellPrice" class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+
         <input asp-for="SellPrice" class="form-control" />
         <span asp-validation-for="SellPrice" class="text-danger"></span>
     </div>
+    </div>
 
 
-    <button type="submit" class="btn btn-success">Save</button> |
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <button type="submit" class="btn btn-success">Save</button> 
+    <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
 </form>
+</div>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+}"
