@@ -12,9 +12,9 @@
     <div class="login-form-container">
         <form method="post" action="@Url.Action("Login", "Auth")">
         <label for="email" class="form-label">Email:</label>
-        <input class="form-control" type='email' placeholder="Enter your Email" name="emailtxt"/>
+        <input class="form-control" type='email' placeholder="Enter your Email" name="email"/>
         <label for="password" class="form-label">Password:</label>
-        <input class="form-control" type='password' placeholder="Enter your password" name="passwordtxt"/>
+        <input class="form-control" type='password' placeholder="Enter your password" name="password"/>
         <button class="login-button">Login</button>
         </form>
         <p>@ViewBag.Message</p>
