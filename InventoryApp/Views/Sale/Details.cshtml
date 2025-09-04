@@ -4,27 +4,42 @@
     ViewData["Title"] = "Sale Details";
 }
 
-<h1>Sale Details</h1>
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h3>Sale Details</h3>
+    </div>
+    <div class="card-body">
+    <h4>@Model.Product?.Name</h4>
+    <hr />
 
 <dl class="row">
-    <dt class="col-sm-2">Product</dt>
-    <dd class="col-sm-10">@Model.Product.Name</dd>
+    <dt class="col-sm-3">Product</dt>
+    <dd class="col-sm-9">@Model.Product?.Name</dd>
 
-    <dt class="col-sm-2">Customer</dt>
-    <dd class="col-sm-10">@Model.Customer?.Name</dd>
+    <dt class="col-sm-3">Customer</dt>
+    <dd class="col-sm-9">@Model.Customer?.Name</dd>
 
-    <dt class="col-sm-2">Quantity</dt>
-    <dd class="col-sm-10">@Model.Quantity</dd>
+    <dt class="col-sm-3">Quantity</dt>
+    <dd class="col-sm-9">@Model.Quantity</dd>
 
-    <dt class="col-sm-2">Price/Unit</dt>
-    <dd class="col-sm-10">@Model.PricePerUnit</dd>
+    <dt class="col-sm-3">Price/Unit</dt>
+    <dd class="col-sm-9">@Model.PricePerUnit</dd>
 
-    <dt class="col-sm-2">Total</dt>
-    <dd class="col-sm-10">@(@Model.Quantity * @Model.PricePerUnit)</dd>
+    <dt class="col-sm-3">Total</dt>
+    <dd class="col-sm-9">@(@Model.Quantity * @Model.PricePerUnit)</dd>
 
-    <dt class="col-sm-2">Date</dt>
-    <dd class="col-sm-10">@Model.SaleDate.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-3">Date</dt>
+    <dd class="col-sm-9">@Model.SaleDate.ToString("yyyy-MM-dd")</dd>
 </dl>
+</div>
 
-<a asp-action="Edit" asp-route-id="@Model.SaleId" class="btn btn-primary">Edit</a> |
-<a asp-action="Index" class="btn btn-secondary">Back</a>
+<div class="text-end m-3">
+    <a asp-action="Edit" asp-route-id="@Model?.SaleId" class="btn btn-primary">Edit</a> 
+     <a asp-action="Delete" asp-route-id="@Model?.SaleId" class="btn btn-danger">Delete</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
