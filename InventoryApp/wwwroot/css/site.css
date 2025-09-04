@@ -29,3 +29,32 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.navbar-nav .nav-link:hover {
+    background-color: #e2e6ea;
+    border-radius: 5px;
+}
+
+/* Make dropdown parent text black by default */
+.navbar-nav .dropdown-toggle {
+    color: #000 !important;
+}
+
+/* When dropdown parent is active */
+.nav-item.dropdown.active > .nav-link {
+    color: #fff !important; /* or dark text if you want a lighter bg */
+    background-color: #0d6efd; /* Bootstrap primary */
+    border-radius: 5px;
+}
+
+/* Hover effect for dropdown parent */
+/* .navbar-nav .dropdown-toggle:hover {
+    color: #0d6efd !important;
+} */
+
+/* Active normal link */
+.navbar-nav .nav-link.active {
+    color: #fff !important;
+    background-color: #0d6efd;
+    border-radius: 5px;
+}

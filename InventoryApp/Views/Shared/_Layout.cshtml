@@ -1,8 +1,26 @@
 ﻿@inject IHttpContextAccessor HttpContextAccessor
 @{
-     var email = HttpContextAccessor.HttpContext?.Session.GetString("Email");
-     var currentUserData = email ?? "";
+    var email = HttpContextAccessor.HttpContext?.Session.GetString("Email");
+    var currentUserData = email ?? "";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+     string IsActive(string ctrl, string act = null)
+    {
+        if (ctrl == currentController && (act == null || act == currentAction))
+            return "active fw-bold";
+        return "";
+    }
+     string IsDropdownActive(params string[] controllers)
+    {
+        foreach (var ctrl in controllers)
+        {
+            if (ctrl == currentController) return "active fw-bold";
+        }
+        return "";
+    }
 }
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,47 +46,71 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">InventoryApp</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-bold px-2" asp-area="" asp-controller="Home" asp-action="Index">InventoryApp</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <div class="navbar-collapse collapse" itemid="navBarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item px-2">
+                            <a class="nav-link @IsActive("Inventory","Dashboard")"
+                                asp-area="" asp-controller="Inventory" asp-action="Dashboard">Dashboard</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                        <li class="nav-item dropdown px-2 @IsDropdownActive("Category","Product","Supplier")">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                                data-bs-toggle="dropdown">Inventory</a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item px-3 py-2 @IsActive("Category")" asp-area="" asp-controller="Category"
+                                        asp-action="Index">Category</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item px-3 py-2 @IsActive("Product")" asp-area="" asp-controller="Product"
+                                        asp-action="Index">Product</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item px-3 py-2 @IsActive("Supplier")" asp-area="" asp-controller="Supplier"
+                                        asp-action="Index">Supplier</a>
+                                </li>
+                            </ul>
                         </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                        <li class="nav-item dropdown px-2 @IsDropdownActive("Purchase","Sale")">
+                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                                data-bs-toggle="dropdown">Operations</a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item px-3 py-2 @IsActive("Purchase")" asp-area="" asp-controller="Purchase"
+                                        asp-action="Index">Purchases</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item px-3 py-2 @IsActive("Sale")" asp-area="" asp-controller="Sale"
+                                        asp-action="Index">Sales</a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Supplier" asp-action="Index">Supplier</a>
+                        <li class="nav-item px-2">
+                            <a class="nav-link  @IsActive("Customer")" asp-area="" asp-controller="Customer"
+                                asp-action="Index">Customer</a>
                         </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">Customer</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Purchase" asp-action="Index">Purchases</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Inventory"
-                                asp-action="Dashboard">Dashboard</a>
-                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto align-items-center">
+
                         @{
-                            if (currentUserData != "")
+                            if (!string.IsNullOrEmpty(currentUserData))
                             {
+                                 <li class="nav-item me-2">
+                            <span class="badge bg-primary px-2 py-1">Logged in as: @currentUserData</span>
+                               </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Auth"
+                                    <a class="btn btn-danger btn-sm px-3 py-2 rounded fw-bold" asp-area="" asp-controller="Auth"
                                         asp-action="Logout">Logout</a>
                                 </li>
                             }
                         }
-                    </ul>
+                </ul>
                 </div>
             </div>
         </nav>
