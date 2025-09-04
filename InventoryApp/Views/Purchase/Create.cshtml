@@ -3,33 +3,48 @@
 @{
     ViewData["Title"] = "Create Purchase";
 }
-
-<h1>Create Purchase</h1>
+<div class="card shadow-sm">
+    <div class="card-header">
+       <h3>@ViewData["Title"]</h3>
+    </div>
+<div class="card-body">
 
 <form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="ProductId">Product</label>
+        @Html.AntiForgeryToken()
+  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3 row">
+        <label asp-for="ProductId" class="col-sm-3 col-form-label">Product</label>
+         <div class="col-sm-9">
         <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+         </div>
     </div>
 
-    <div class="form-group">
-        <label asp-for="SupplierId">Supplier</label>
+    <div class="mb-3 row">
+        <label asp-for="SupplierId" class="col-sm-3 col-form-label">Supplier</label>
+         <div class="col-sm-9">
         <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId"></select>
+         </div>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Quantity"></label>
+    <div class="mb-3 row">
+        <label asp-for="Quantity" class="col-sm-3 col-form-label"></label>
+         <div class="col-sm-9">
         <input asp-for="Quantity" class="form-control" />
+         </div>
     </div>
 
-    <div class="form-group">
-        <label asp-for="PricePerUnit"></label>
+    <div class="mb-3 row">
+        <label asp-for="PricePerUnit" class="col-sm-3 col-form-label"></label>
+         <div class="col-sm-9">
         <input asp-for="PricePerUnit" class="form-control" />
+         </div>
     </div>
 
-    <button type="submit" class="btn btn-success">Save</button> |
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+                 <button type="submit" class="btn btn-success">Save</button> 
+    <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
 </form>
+</div>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
