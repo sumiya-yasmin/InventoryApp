@@ -1,8 +1,44 @@
-﻿@{
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@{
+    var email = HttpContextAccessor.HttpContext?.Session.GetString("Email");
+    var username = email?.Split('@')[0] ?? "User"; 
+ }
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome, @username!</h1>
+    <p class="lead">Your complete solution for managing inventory, sales, and purchases.</p>
+</div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Product" asp-action="Create" class="btn btn-primary btn-lg w-100 py-3 shadow-sm d-flex flex-column align-items-center">
+                <i class="bi bi-plus-circle-fill me-2" style="font-size: 2rem;"></i>
+                <span class="mt-2">Add New Product</span>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Sale" asp-action="Create" class="btn btn-success btn-lg w-100 py-3 shadow-sm d-flex flex-column align-items-center">
+                <i class="bi bi-cart-fill me-2" style="font-size: 2rem;"></i>
+                <span class="mt-2">Record a Sale</span>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-info btn-lg w-100 py-3 shadow-sm d-flex flex-column align-items-center">
+                <i class="bi bi-box-seam-fill me-2" style="font-size: 2rem;"></i>
+                <span class="mt-2">View All Products</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <p class="text-muted">Or you can go to the full dashboard for a complete overview.</p>
+        <a class="btn btn-outline-secondary btn-sm" asp-controller="Inventory" asp-action="Dashboard">Go to Dashboard</a>
+    </div>
 </div>
