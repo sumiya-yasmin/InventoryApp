@@ -1,12 +1,169 @@
+@model InventoryApp.ViewModels.DashboardViewModel
 @{
-    ViewData["Title"] = "Dashboard Page";
+    ViewData["Title"] = "Dashboard";
     Layout = "_Layout";
 }
-@section Styles {
-    <link rel="stylesheet" href="~/css/dashboard.css" />
-}
 
-<div class="dashboard">
-    <div class="title">holy shit pit</div>
-    <p>guluuuuuu</p>
+<div class="container mt-4">
+
+    <!-- KPI Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-2 mb-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h6>Categories</h6>
+                    <h3>@Model.Categories.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h6>Products</h6>
+                    <h3>@Model.Products.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-3">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <h6>Customers</h6>
+                    <h3>@Model.Customers.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <h6>Suppliers</h6>
+                    <h3>@Model.Suppliers.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-3">
+            <div class="card bg-secondary text-white shadow-sm">
+                <div class="card-body">
+                    <h6>Sales</h6>
+                    <h3>@Model.Sales.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-3">
+            <div class="card bg-danger text-white shadow-sm">
+                <div class="card-body">
+                    <h6>Purchases</h6>
+                    <h3>@Model.Purchases.Count()</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Low Stock Products -->
+<div class="col-md-6 mb-4">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-danger">Low Stock Alerts</h5>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-sm btn-link">View All</a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr><th>Product</th><th>Stock</th><th>Reorder Level</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Products.Where(p => p.QuantityInStock < 10).Take(5))
+                    {
+                        <tr>
+                            <td>@p.Name</td>
+                            <td class="text-danger fw-bold">@p.QuantityInStock</td>
+                            <td>10</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    <!-- Recent Activity Section -->
+    <div class="row d-flex">
+        <!-- Recent Products -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Products</h5>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-sm btn-link">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr><th>Name</th><th>Category</th><th>Stock</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.Products.OrderByDescending(p => p.ProductId).Take(5))
+                            {
+                                <tr>
+                                    <td>@p.Name</td>
+                                    <td>@p.Category?.Name</td>
+                                    <td>@p.QuantityInStock</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Sales -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Sales</h5>
+                    <a asp-controller="Sale" asp-action="Index" class="btn btn-sm btn-link">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr><th>Date</th><th>Customer</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var sale in Model.Sales.OrderByDescending(s => s.SaleDate).Take(5))
+                            {
+                                <tr>
+                                    <td>@sale.SaleDate.ToShortDateString()</td>
+                                    <td>@sale.Customer?.Name</td>
+                                    <td>@(sale.Quantity * sale.PricePerUnit)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Purchases -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Purchases</h5>
+                    <a asp-controller="Purchase" asp-action="Index" class="btn btn-sm btn-link">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr><th>Date</th><th>Supplier</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var purchase in Model.Purchases.OrderByDescending(p => p.PurchaseDate).Take(5))
+                            {
+                                <tr>
+                                    <td>@purchase.PurchaseDate.ToShortDateString()</td>
+                                    <td>@purchase.Supplier?.Name</td>
+                                    <td>@(purchase.Quantity * purchase.PricePerUnit)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
